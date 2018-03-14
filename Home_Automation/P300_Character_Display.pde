@@ -3,6 +3,7 @@
 
 import processing.core.*;
 import g4p_controls.*;
+import java.awt.Font;
  
 public class P300_Character_Display {
  
@@ -10,7 +11,7 @@ public class P300_Character_Display {
   private PApplet parent;
   private GWindow window;
   
-  private final int MAX_ROW = 3;
+  private final int MAX_ROW = 4;
   private final int MAX_COLUMN = 3;
  
   public P300_Character_Display() {
@@ -25,19 +26,6 @@ public class P300_Character_Display {
     this.parent = p;
     createGUI();
   }
-  
-  
-  private void drawLines() {
- //Draw out the horizontal lines.
-  for (int i = 0; i < MAX_ROW; i++) {
-    line(0,(h/MAX_ROW)*(i), w, (h/MAX_ROW)*(i));
-    println("line " + i + " with (x1,y1) equal to (" + 0 + "," + h/MAX_ROW + ")" + " with (x2,y2) equal to (" + w + "," + h/MAX_ROW + ")" );
-  }
-  for (int i = 0; i <MAX_COLUMN; i++) {
-    line((w/MAX_COLUMN)*(i), 0,(w/MAX_COLUMN)*(i), h);
-     println("line " + i + " with (x1,y1) equal to (" + 0 + "," + h/MAX_ROW + ")" + " with (x2,y2) equal to (" + w + "," + h/MAX_ROW + ")" );
-  }
-}
   
   public void show() {
     window.setVisible(true);
@@ -57,22 +45,51 @@ public class P300_Character_Display {
   private void createGUI() {
     window =  GWindow.getWindow(parent, "P300 Speller", 100, 50, w, h, JAVA2D);
     window.addDrawHandler(this, "windowDraw");  // this is a reference to window (which extends PApplet), apparently?
-    window.setActionOnClose(G4P.KEEP_OPEN);  // Ignore clicking X
+    window.setActionOnClose(G4P.CLOSE_WINDOW);
     window.setAlwaysOnTop(true);
     window.setVisible(false);
   }
   
+  /**
+ * public abstract void setActionOnClose(int action);
+ * This sets what happens when the users attempts to close the window.
+ * There are 3 possible actions depending on the value passed.
+ * G4P.KEEP_OPEN - ignore attempt to close window (default action)
+ * G4P.CLOSE_WINDOW - close this window
+ * G4P.EXIT_APP - exit the app, this will cause all windows to close.
+ * @param action the required close action
+  */
+  
   // runs in a loop ~60FPS, I think
   // Draw using applet.<usual PApplet methods>(<args>)
   public void windowDraw(PApplet applet, GWinData windata) {
+    
+    // START -- Drawing character boxes
+    int charXOffset, charYOffset;
+    charXOffset = (w/MAX_ROW) / 2;
+    charYOffset = (h/MAX_COLUMN) / 2;
     for (int i = 0; i < MAX_ROW; i++) {
-      applet.line(0,(h/MAX_ROW)*(i), w, (h/MAX_ROW)*(i));
+      float xpos = (w/MAX_ROW)*i;
+      for (int j = 0; j < MAX_COLUMN; j++) {
+        float ypos = (h/MAX_COLUMN)*j;
+       
+        // to-do: generate random row and column and light up accordingly
+        // to-do: check if rectangle should be lit, if so, fill with color other than black
+        applet.fill(0f);
+        applet.stroke(255f);
+        applet.rect(xpos, ypos, (w/MAX_ROW), (h/MAX_COLUMN));
+        applet.textSize(32);
+        applet.fill(255f, 255f, 255f);
+        applet.text(characters[(i+(j*MAX_ROW))], xpos + charXOffset, ypos + charYOffset);
+      }
+      //applet.line(0,(h/MAX_ROW)*(i), w, (h/MAX_ROW)*(i));
       //println("line " + i + " with (x1,y1) equal to (" + 0 + "," + h/MAX_ROW + ")" + " with (x2,y2) equal to (" + w + "," + h/MAX_ROW + ")" );
     }
     for (int i = 0; i <MAX_COLUMN; i++) {
-      applet.line((w/MAX_COLUMN)*(i), 0,(w/MAX_COLUMN)*(i), h);
-      //println("line " + i + " with (x1,y1) equal to (" + 0 + "," + h/MAX_ROW + ")" + " with (x2,y2) equal to (" + w + "," + h/MAX_ROW + ")" );
+      // may not need this anymore
     }
+    // END -- Drawing character boxes
+    
   }
   
   // From old P300_Character_Display
@@ -108,10 +125,7 @@ public class P300_Character_Display {
            all the way to case of MAX_COLUMN
         }
   }
-  void draw() 
-  {
-    
-  }
+
   void producerandc(int rowcolumn, int position) {
     int y = 0;
     int x = 0;
