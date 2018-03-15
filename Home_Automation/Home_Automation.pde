@@ -30,6 +30,7 @@ void setupUI() {
   btn_ToggleSpeller = new GButton(this, 0, 0, 500, 50, txt_ToggleSpeller);
   btn_ToggleSpeller.setFont(new Font("Dialog", Font.PLAIN, 24));
   btn_ToggleSpeller.addEventHandler(this, "btn_ToggleSpeller_click");
+  
 }
 
 // X Button ignored/disabled. Instead of closing window, we toggle its visibility.

@@ -13,6 +13,10 @@ public class P300_Character_Display {
   
   private final int MAX_ROW = 4;
   private final int MAX_COLUMN = 3;
+  private int runcount = 0;
+  private int randrow = 0;
+  private int randcol = 0;
+  private int roworcolumn = 0;
  
   public P300_Character_Display() {
     w = 200;
@@ -29,6 +33,7 @@ public class P300_Character_Display {
   
   public void show() {
     window.setVisible(true);
+  
   }
   
   public void hide() {
@@ -62,34 +67,93 @@ public class P300_Character_Display {
   
   // runs in a loop ~60FPS, I think
   // Draw using applet.<usual PApplet methods>(<args>)
+  public void WindowRedraw(int i, int j) {
+  
+  }
   public void windowDraw(PApplet applet, GWinData windata) {
     
     // START -- Drawing character boxes
-    int charXOffset, charYOffset;
-    charXOffset = (w/MAX_ROW) / 2;
-    charYOffset = (h/MAX_COLUMN) / 2;
-    for (int i = 0; i < MAX_ROW; i++) {
-      float xpos = (w/MAX_ROW)*i;
-      for (int j = 0; j < MAX_COLUMN; j++) {
-        float ypos = (h/MAX_COLUMN)*j;
-       
+    //ROW (x axis) in this case are the columns of previous code
+    //COLUMN (y axis) in this case are the rows of previous code
+    if (runcount > 0) { //In the case this is not first runtime, get random ints.
+      roworcolumn++;
+      switch (roworcolumn % 2) { //If roworcolumn is 1, then we will say it is a column, and vice versa
+        case 0:
+          randrow = int(random(float(MAX_ROW)));
+          println("Randrow is equal to " + randrow);
+          break;
+        case 1:
+          randcol = int(random(float(MAX_COLUMN)));
+          println("Randcol is equal to " + randcol);
+          break;
+      }
+    }
+    float charXOffset, charYOffset;
+    charXOffset = (w/MAX_COLUMN) / 2;
+    charYOffset = (h/MAX_ROW) / 2;
+    for (int i = 0; i < MAX_ROW; i++) { //x value
+      float ypos = (h/MAX_ROW)*i;
+      for (int j = 0; j < MAX_COLUMN; j++) { //y value
+        float xpos = (w/MAX_COLUMN)*j;
+       if (runcount == 0){ //If first runtime, this is a special case. Display all characters
+          applet.fill(0f);
+          applet.stroke(255f);
+          applet.rect(xpos, ypos, (w/MAX_COLUMN), (h/MAX_ROW));
+          applet.textSize(32);
+          applet.fill(255f, 255f, 255f);
+          applet.text(characters[(j+(i*MAX_ROW))], xpos + charXOffset, ypos + charYOffset);
+        } else { //If any other runtime
         // to-do: generate random row and column and light up accordingly
         // to-do: check if rectangle should be lit, if so, fill with color other than black
-        applet.fill(0f);
-        applet.stroke(255f);
-        applet.rect(xpos, ypos, (w/MAX_ROW), (h/MAX_COLUMN));
-        applet.textSize(32);
-        applet.fill(255f, 255f, 255f);
-        applet.text(characters[(i+(j*MAX_ROW))], xpos + charXOffset, ypos + charYOffset);
+           //Not sure if this is the best way of doing it, but I decided to gray out the rectangles that we aren't using.
+            switch(roworcolumn % 2) {
+            /*Depending on whether or not it is the row or column, then we will display it.*/
+            case 0:
+            //Currently, this case doesn't seem to be working as intended, but the other case seems to work fine
+            //Probably put the code used in here in a separate function
+              if (j == randcol) { //Only when j equals randcol will it display the text
+                applet.fill(0f);
+                applet.stroke(255f);
+                applet.rect(xpos, ypos, (w/MAX_COLUMN), (h/MAX_ROW));
+                applet.textSize(32);
+                applet.fill(255f, 255f, 255f);
+                applet.text(characters[(j+(i*MAX_ROW))], xpos + charXOffset, ypos + charYOffset);
+                println("In case 0, Index of " + (j+(i*MAX_ROW)) + "at position (" + (xpos + charXOffset) + "," + (ypos + charYOffset) + "), i of " + i + " j of " + j );
+                println("ypos of " + ypos);
+               } else {
+                  applet.fill(105f);
+                  applet.stroke(255f);
+                  applet.rect(xpos, ypos, (w/MAX_COLUMN), (h/MAX_ROW));
+               }
+               break;
+            case 1:
+              if (i == randrow) { //Only when i equals randrow will it display text
+               applet.fill(0f);
+               applet.stroke(255f);
+               applet.rect(xpos, ypos, (w/MAX_COLUMN), (h/MAX_ROW));
+               applet.textSize(32);
+               applet.fill(255f, 255f, 255f);
+               applet.text(characters[(j+(i*MAX_ROW))], xpos + charXOffset, ypos + charYOffset);
+               println("In case 1, Index of " + (j+(i*MAX_ROW)) );
+              } else {
+               applet.fill(105f);
+               applet.stroke(255f);
+               applet.rect(xpos, ypos, (w/MAX_COLUMN), (h/MAX_ROW));
+             }
+               break;
+            }
+            
       }
+    }
       //applet.line(0,(h/MAX_ROW)*(i), w, (h/MAX_ROW)*(i));
       //println("line " + i + " with (x1,y1) equal to (" + 0 + "," + h/MAX_ROW + ")" + " with (x2,y2) equal to (" + w + "," + h/MAX_ROW + ")" );
     }
-    for (int i = 0; i <MAX_COLUMN; i++) {
-      // may not need this anymore
+     // may not need this anymore
+     delay(1000);
+      runcount++;
     }
     // END -- Drawing character boxes
-    
+  
   }
   
   // From old P300_Character_Display
@@ -174,4 +238,3 @@ public class P300_Character_Display {
     }
   }
   */
-}
