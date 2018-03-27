@@ -16,7 +16,7 @@ void setup()
 {
   parentApplet = this;
   String[] args = {"--location=0,0", "P300_Character_Display"};
-  speller = new P300_Character_Display(parentApplet, 800, 600);
+  speller = new P300_Character_Display(parentApplet, 1200, 800);
   setupUI();
 }
 void draw() 
